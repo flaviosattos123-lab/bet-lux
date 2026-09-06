@@ -55,6 +55,7 @@ const AuthenticatedApp = () => {
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
+};
 
 export default function App() {
   return (
@@ -69,4 +70,3 @@ export default function App() {
     </Router>
   );
 }
-// Deploy ativo final
