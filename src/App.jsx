@@ -60,3 +60,6 @@ const AuthenticatedApp = () => {
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
+export default function App() {
+  return <AuthenticatedApp />;
+}
