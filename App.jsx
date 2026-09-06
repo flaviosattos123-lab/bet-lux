@@ -57,7 +57,7 @@ const AuthenticatedApp = () => {
           <Route path="/perfil" element={<Profile />} />
         </Route>
       </Route>
-      <Route path="*" element={<PageNotFound />} />
+      <Route path="*" element={<div>Página não encontrada</div>} />
     </Routes>
   );
 };
