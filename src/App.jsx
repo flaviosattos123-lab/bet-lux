@@ -6,21 +6,23 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { Navigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
+import Historico from '@/pages/Historico';
+import Configuracoes from '@/pages/Configuracoes';
 import Home from '@/pages/Home';
 import Deposit from '@/pages/Deposit';
 import Withdraw from '@/pages/Withdraw';
 import Profile from '@/pages/Profile';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPasssword';
+import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
+// Add page imports here
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
 
+  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -29,44 +31,45 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
-    }
+  // Handle authentication errors
+  if (authError && authError.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
   }
 
+  // Render the main app
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/deposito" element={<Deposit />} />
+        <Route path="/saque" element={<Withdraw />} />
+        <Route path="/perfil" element={<Profile />} />
+        <Route path="/historico" element={<Historico />} />
+        <Route path="/configuracoes" element={<Configuracoes />} />
+        <Route path="/registro" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Route>
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/register" replace />} />}>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/deposito" element={<Deposit />} />
-          <Route path="/saque" element={<Withdraw />} />
-          <Route path="/perfil" element={<Profile />} />
-        </Route>
-      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
 
-export default function App() {
+
+function App() {
+
   return (
-    <Router>
+    <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <AuthProvider>
+        <Router>
           <ScrollToTop />
           <AuthenticatedApp />
-          <Toaster />
-        </AuthProvider>
+        </Router>
+        <Toaster />
       </QueryClientProvider>
-    </Router>
-  );
+    </AuthProvider>
+  )
 }
+
+export default App
